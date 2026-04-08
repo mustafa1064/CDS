@@ -1,0 +1,427 @@
+﻿<UserControl x:Class="CDS.Wpf.Views.DebugPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:converters="clr-namespace:CDS.Wpf.Converters"
+             Unloaded="UserControl_Unloaded">
+
+    <UserControl.Resources>
+
+        <!-- 🔹 EXISTING -->
+        <converters:BoolToExpandCollapseConverter x:Key="BoolToExpandCollapseConverter"/>
+        <converters:GreaterThanOneToVisibilityConverter x:Key="GreaterThanOneToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- 🔥 MODERN BUTTON STYLE -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            RenderTransformOrigin="0.5,0.5">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+
+                            <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#D5E8FF"/>
+                            </Trigger>
+
+                            <!-- 🔥 PRESS (your animation here) -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="bd" Property="Background" Value="#BBDEFB"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 🔴 DANGER BUTTON -->
+        <Style x:Key="DangerButton"
+           TargetType="Button"
+           BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#F44336"/>
+            <Setter Property="Foreground" Value="White"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E53935"/>
+                </Trigger>
+
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#C62828"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 🔥 CONTROL BAR -->
+        <ScrollViewer Grid.Row="0"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Disabled">
+
+            <WrapPanel Margin="5">
+
+                <!-- 🔹 SYSTEM CONTROLS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">                    
+                    <StackPanel>
+                        <TextBlock Text="System"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+                            <CheckBox Content="Enable Debug"
+                                      IsChecked="{Binding IsEnabled}"
+                                      Margin="5"
+                                      ToolTip="Turn CDS on/off"/>
+
+                            <CheckBox Content="Pause"
+                                      IsChecked="{Binding IsPaused}"
+                                      Margin="5"
+                                      ToolTip="Pause incoming logs"/>
+
+                            <CheckBox Content="Auto Scroll"
+                                      IsChecked="{Binding AutoScroll}"
+                                      Margin="5"
+                                      ToolTip="Scroll to latest log automatically"/>
+
+                            <CheckBox Content="Group Duplicates"
+                                      IsChecked="{Binding RemoveDuplicates}"
+                                      Margin="5"
+                                      ToolTip="Group repeated logs into xN"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 FILTERS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Filters"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Level" FontSize="11"/>
+                                <ComboBox Width="120"
+                                          ItemsSource="{Binding Levels}"
+                                          SelectedItem="{Binding SelectedLevel}"
+                                          ToolTip="Filter by log level"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Category" FontSize="11"/>
+                                <ComboBox Width="140"
+                                          ItemsSource="{Binding Categories}"
+                                          SelectedItem="{Binding SelectedCategory}"
+                                          ToolTip="Filter by category"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Search" FontSize="11"/>
+                                <TextBox Width="220"
+                                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Search across all fields"/>
+                            </StackPanel>
+
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 PERFORMANCE -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Performance"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+
+                            <!-- Max Events -->
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Max Events" FontSize="11"/>
+                                <TextBox Width="80"
+                         Text="{Binding MaxEvents}"
+                         ToolTip="Maximum number of logs to keep"/>
+                            </StackPanel>
+
+                            <!-- UI Refresh -->
+                            <StackPanel Margin="5">
+                                <TextBlock Text="UI Refresh (ms)" FontSize="11"/>
+                                <TextBox Width="100"
+                         Text="{Binding UiRefreshIntervalMs}"
+                         ToolTip="UI update interval. 0 = real-time"/>
+                            </StackPanel>
+
+                            <!-- 🔥 Pause Buffer (NEW - PERFECT PLACE) -->
+                            <StackPanel Margin="10,0,0,0">
+
+                                <TextBlock Text="Pause Buffer"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,4"/>
+
+                                <WrapPanel>
+
+                                    <CheckBox Content="Limit Buffer"
+                              IsChecked="{Binding EnableBufferLimit}"
+                              Margin="5"
+                              ToolTip="Prevent memory growth during pause"/>
+
+                                    <TextBox Width="80"
+                             Margin="5"
+                             Text="{Binding MaxBufferSize}"
+                             ToolTip="Max buffered logs during pause"/>
+
+                                </WrapPanel>
+
+                            </StackPanel>
+
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 COLUMNS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Visible Columns When Copy"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+
+                            <CheckBox Content="Time" IsChecked="{Binding ShowTime}" Margin="5"/>
+                            <CheckBox Content="Category" IsChecked="{Binding ShowCategory}" Margin="5"/>
+                            <CheckBox Content="Level" IsChecked="{Binding ShowLevel}" Margin="5"/>
+                            <CheckBox Content="Source" IsChecked="{Binding ShowSource}" Margin="5"/>
+                            <CheckBox Content="Message" IsChecked="{Binding ShowMessage}" Margin="5"/>
+                            <CheckBox Content="Thread" IsChecked="{Binding ShowThread}" Margin="5"/>
+                            <CheckBox Content="Session" IsChecked="{Binding ShowSession}" Margin="5"/>
+
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 ACTIONS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Actions"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+                            <Button Content="Clear"
+                                    Style="{StaticResource DangerButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="Clear_Click"
+                                    ToolTip="Clear all logs"/>
+
+                            <Button Content="Copy"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="Copy_Click"
+                                    ToolTip="Copy logs to clipboard"/>
+
+                            <Button Content="Export"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="Export_Click"
+                                    ToolTip="Export logs to file"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+            </WrapPanel>
+        </ScrollViewer>
+
+        <!-- 🔥 LOG GRID -->
+        <DataGrid x:Name="DebugGrid"
+                  Grid.Row="1"
+                  ItemsSource="{Binding FilteredEvents}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Loaded="DataGrid_Loaded"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+            <!-- 🔹 ROW COLORING -->
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+
+                        <DataTrigger Binding="{Binding Event.Level}" Value="Error">
+                            <Setter Property="Background" Value="#FFCDD2"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Event.Level}" Value="Warning">
+                            <Setter Property="Background" Value="#FFF9C4"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Event.Level}" Value="Info">
+                            <Setter Property="Background" Value="#E3F2FD"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Event.Level}" Value="Verbose">
+                            <Setter Property="Background" Value="#F5F5F5"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Count}" Value="0">
+                            <Setter Property="FontSize" Value="11"/>
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <!-- 🔹 COLUMNS -->
+            <DataGrid.Columns>
+
+                <!-- EXPAND -->
+                <DataGridTemplateColumn Header="" Width="35">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding IsExpanded, Converter={StaticResource BoolToExpandCollapseConverter}}"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    FontWeight="Bold"
+                                    Style="{StaticResource ModernButton}"
+                                    Click="ToggleExpand_Click">
+
+                                <Button.Visibility>
+                                    <Binding Path="Count" Converter="{StaticResource GreaterThanOneToVisibilityConverter}"/>
+                                </Button.Visibility>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- COUNT -->
+                <DataGridTextColumn Header="Count"
+                                    Binding="{Binding Count}"
+                                    Width="80"/>
+
+                <!-- TIME -->
+                <DataGridTextColumn Header="Time"
+                                    Binding="{Binding Event.Timestamp, StringFormat=HH:mm:ss.fff}">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowTime"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- CATEGORY -->
+                <DataGridTextColumn Header="Category"
+                                    Binding="{Binding Event.Category}"
+                                    Width="110">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowCategory"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- LEVEL -->
+                <DataGridTextColumn Header="Level"
+                                    Binding="{Binding Event.Level}"
+                                    Width="90">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowLevel"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- SOURCE -->
+                <DataGridTextColumn Header="Source"
+                                    Binding="{Binding Event.Source}"
+                                    Width="160">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowSource"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- MESSAGE -->
+                <DataGridTextColumn Header="Message"
+                                    Binding="{Binding Event.Message}"
+                                    Width="*">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowMessage"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- THREAD -->
+                <DataGridTextColumn Header="Thread"
+                                    Binding="{Binding Event.ThreadId}"
+                                    Width="80">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowThread"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+                <!-- SESSION -->
+                <DataGridTextColumn Header="Session"
+                                    Binding="{Binding Event.SessionId}"
+                                    Width="150">
+                    <DataGridTextColumn.Visibility>
+                        <Binding Path="DataContext.ShowSession"
+                                 RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                 Converter="{StaticResource BoolToVisibilityConverter}"/>
+                    </DataGridTextColumn.Visibility>
+                </DataGridTextColumn>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+    </Grid>
+</UserControl>

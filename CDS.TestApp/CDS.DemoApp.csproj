@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <!-- Target -->
+    <TargetFramework>net472</TargetFramework>
+
+    <!-- WPF ENABLE -->
+    <UseWPF>true</UseWPF>
+
+    <!-- App -->
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>CDS.TestApp</RootNamespace>
+
+    <!-- Compiler -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CDS.Core\CDS.Core.csproj" />
+    <ProjectReference Include="..\CDS.Wpf\CDS.Wpf.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,193 @@
+﻿<Window x:Class="CDS.TestApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cds="clr-namespace:CDS.Wpf.Views;assembly=CDS.Wpf"
+        mc:Ignorable="d"
+        Title="CDS Demo App" Height="600" Width="1000">
+
+    <Window.Resources>
+
+        <!-- 🔥 MODERN BUTTON STYLE -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#F5F5F5"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#EAEAEA"/>
+                            </Trigger>
+
+                            <!-- Press -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#D6D6D6"/>
+                                <Setter TargetName="border" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <!-- Disabled -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 🔥 DANGER BUTTON (CLEAR) -->
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#FDECEA"/>
+            <Setter Property="BorderBrush" Value="#F5C6CB"/>
+            <Setter Property="Foreground" Value="#B71C1C"/>
+        </Style>
+
+        <!-- 🔥 SUCCESS BUTTON (START) -->
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#E8F5E9"/>
+            <Setter Property="BorderBrush" Value="#C8E6C9"/>
+            <Setter Property="Foreground" Value="#2E7D32"/>
+        </Style>
+
+        <!-- 🔥 STOP BUTTON -->
+        <Style x:Key="StopButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#FFEBEE"/>
+            <Setter Property="BorderBrush" Value="#FFCDD2"/>
+            <Setter Property="Foreground" Value="#C62828"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 🔥 DEMO CONTROL PANEL -->
+        <ScrollViewer Grid.Row="0"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Disabled">
+
+            <WrapPanel Margin="5">
+
+                <!-- 🔹 BASIC LOGS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Basic Logs"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+                            <Button Content="Info"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="Info_Click"/>
+
+                            <Button Content="Warn / Error"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="110"
+                                    Margin="5"
+                                    Click="WarnError_Click"/>
+
+                            <Button Content="Duplicate"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="100"
+                                    Margin="5"
+                                    Click="Duplicate_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 BURST / STRESS -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Stress Testing"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+                            <Button Content="Burst (100)"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="110"
+                                    Margin="5"
+                                    Click="Burst_Click"/>
+
+                            <Button Content="Stress 1K/sec"
+                                    Style="{StaticResource ModernButton}"
+                                    Width="130"
+                                    Margin="5"
+                                    Click="Stress_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 🔹 AUTO LOGGING -->
+                <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="6" Padding="8" Margin="5">
+                    <StackPanel>
+                        <TextBlock Text="Auto Logging"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <WrapPanel>
+
+                            <Button Content="Start"
+                                    Style="{StaticResource SuccessButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="StartAuto_Click"/>
+
+                            <Button Content="Stop"
+                                    Style="{StaticResource StopButton}"
+                                    Width="80"
+                                    Margin="5"
+                                    Click="StopAuto_Click"/>
+
+                            <StackPanel Margin="10,0,0,0">
+                                <TextBlock Text="Rate (ms)" FontSize="11"/>
+                                <Slider x:Name="RateSlider"
+                                        Minimum="10"
+                                        Maximum="1000"
+                                        Value="200"
+                                        Width="160"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding ElementName=RateSlider, Path=Value, StringFormat=F0 ms}"
+                                       VerticalAlignment="Center"
+                                       Margin="10,0,0,0"/>
+
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+            </WrapPanel>
+        </ScrollViewer>
+
+        <!-- 🔥 DEBUG PANEL -->
+        <cds:DebugPanelView Grid.Row="1"/>
+
+    </Grid>
+</Window>

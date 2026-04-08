@@ -5,6 +5,7 @@
 ![GitHub stars](https://img.shields.io/github/stars/mustafa1064/CDS?style=social)
 
 > A structured, real-time debug signal system for .NET — designed to replace noisy logs with meaningful, actionable signals.
+> Turn debugging into a real-time, observable signal system for .NET applications.
 
 ---
 

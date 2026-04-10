@@ -5,7 +5,6 @@
 ![GitHub stars](https://img.shields.io/github/stars/mustafa1064/CDS?style=social)
 
 > A structured, real-time debug signal system for .NET — designed to replace noisy logs with meaningful, actionable signals.
-> Turn debugging into a real-time, observable signal system for .NET applications.
 
 ---
 
@@ -82,6 +81,14 @@ DebugBus.Emit("Rendering", DebugLevel.Warning, "Image too large");
 ---
 
 ## 📦 Installation
+
+### .NET CLI
+```bash
+dotnet add package CDS.Core
+dotnet add package CDS.Wpf
+````
+
+### Package Manager
 
 ```powershell
 Install-Package CDS.Core

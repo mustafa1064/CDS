@@ -26,10 +26,21 @@ Traditional debugging is broken:
 ## 1. Install
 
 ```powershell
-Install-Package CDS.Core
+Install-Package CDS.Core 
 Install-Package CDS.Wpf
 ```
 
+---
+
+## 🚀 Quick Install
+
+```bash
+dotnet add package CDS.Core
+dotnet add package CDS.Wpf
+````
+
+> Always installs the latest version.
+> 💡 Tip: Omit `--version` to always install the latest release.
 ---
 
 ## 2. Enable CDS (REQUIRED)

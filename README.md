@@ -21,7 +21,13 @@ Debugging modern applications is inefficient:
 - ❌ Visual Studio Output is cluttered  
 - ❌ Logs are unstructured and noisy  
 - ❌ Important signals get buried  
-- ❌ AI tools struggle to identify real issues  
+- ❌ AI tools struggle to identify real issues
+
+CDS Makes Debugging crystal clear:
+  
+> ✅ Real-time debugging panel for .NET apps
+> ✅ Stop reading logs. See your app live.
+> ✅ CDS streams structured debug events into a live UI so you can understand your app behavior instantly.
 
 ---
 
@@ -413,7 +419,8 @@ CDS is:
 
 > CDS is not a logger.
 > It is a **Debug Signal Infrastructure Engine**.
-
+> **“A real-time debug panel for .NET apps — like a live console inside your UI.”**
+> “CDS lets you see structured debug signals in real-time while your app is running — no log digging, no breakpoints.”
 ---
 
 ## 📄 License
